@@ -108,6 +108,8 @@ export class MutationTestReportCalculator {
         return mutationTestReportSchema.MutantStatus.Timeout;
       case MutantStatus.TranspileError:
         return mutationTestReportSchema.MutantStatus.CompileError;
+      case MutantStatus.Ignored:
+        return mutationTestReportSchema.MutantStatus.Ignored;
       default:
         this.logUnsupportedMutantStatus(status);
         return mutationTestReportSchema.MutantStatus.RuntimeError;

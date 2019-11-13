@@ -39,7 +39,7 @@ describe('MutatorFacade', () => {
       expect(testInjector.logger.info).to.have.been.calledWith('3 Mutant(s) generated');
     });
 
-    it('should log the number of mutants generated and excluded', async () => {
+    it('should log the number of mutants generated and ignored', async () => {
       mutatorMock.mutate.returns([
         factory.mutant({ mutatorName: 'foo' }),
         factory.mutant({ mutatorName: 'bar' }),
@@ -47,10 +47,10 @@ describe('MutatorFacade', () => {
       ]);
       testInjector.mutatorDescriptor.excludedMutations = ['foo'];
       createSut().mutate([]);
-      expect(testInjector.logger.info).calledWith('2 Mutant(s) generated (1 Mutant(s) excluded)');
+      expect(testInjector.logger.info).calledWith('2 Mutant(s) generated (1 Mutant(s) ignored)');
     });
 
-    it('should log the absence of mutants and the excluded number when all mutants are excluded', async () => {
+    it('should log the absence of mutants and the ignored number when all mutants are ignored', async () => {
       mutatorMock.mutate.returns([
         factory.mutant({ mutatorName: 'foo' }),
         factory.mutant({ mutatorName: 'bar' }),
@@ -59,7 +59,7 @@ describe('MutatorFacade', () => {
       testInjector.mutatorDescriptor.excludedMutations = ['foo', 'bar', 'baz'];
       testInjector.mutatorDescriptor.name = 'javascript';
       createSut().mutate([]);
-      expect(testInjector.logger.info).calledWith("It's a mutant-free world, nothing to test. (3 Mutant(s) excluded)");
+      expect(testInjector.logger.info).calledWith("It's a mutant-free world, nothing to test. (3 Mutant(s) ignored)");
     });
 
     it('should log the absence of mutants if no mutants were generated', async () => {

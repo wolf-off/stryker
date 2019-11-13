@@ -7,6 +7,7 @@ import { Observable, range } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { from } from 'rxjs';
 import { flatMap, zip } from 'rxjs/operators';
+import { MutantStatus } from '@stryker-mutator/api/report';
 
 import { coreTokens } from '../di';
 import SourceFile from '../SourceFile';
@@ -67,6 +68,9 @@ export class MutantTranspileScheduler implements Disposable {
   }
 
   private async transpileMutant(mutant: TestableMutant): Promise<TranspiledMutant> {
+    if (mutant.mutant.status === MutantStatus.Ignored) {
+      return Promise.resolve(this.createTranspiledMutant(mutant, { outputFiles: [], error: null }));
+    }
     const filesToTranspile: File[] = [];
     if (this.currentMutatedFile && this.currentMutatedFile.name !== mutant.fileName) {
       filesToTranspile.push(this.currentMutatedFile.file);

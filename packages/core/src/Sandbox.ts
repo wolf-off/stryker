@@ -98,6 +98,9 @@ export default class Sandbox {
       }
       const result = transpiledMutant.mutant.createResult(MutantStatus.TranspileError, []);
       return result;
+    } else if (transpiledMutant.mutant.mutant.status === MutantStatus.Ignored) {
+      const result = transpiledMutant.mutant.createResult(MutantStatus.Ignored, []);
+      return result;
     } else if (!transpiledMutant.mutant.runAllTests && !transpiledMutant.mutant.selectedTests.length) {
       const result = transpiledMutant.mutant.createResult(MutantStatus.NoCoverage, []);
       return result;

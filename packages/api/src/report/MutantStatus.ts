@@ -42,7 +42,13 @@ enum MutantStatus {
    *
    * Mutants that result in a TranspileError are not taken into account during score calculation.
    */
-  TranspileError
+  TranspileError,
+
+  /**
+   * The status of a mutant which has been ignored.
+   * Mutants that are Ignored are not taken into account during score calculation.
+   */
+  Ignored
 }
 
 export default MutantStatus;

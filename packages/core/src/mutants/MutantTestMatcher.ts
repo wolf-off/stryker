@@ -2,7 +2,7 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { MatchedMutant } from '@stryker-mutator/api/report';
+import { MatchedMutant, MutantStatus } from '@stryker-mutator/api/report';
 import { CoverageCollection, CoveragePerTestResult, CoverageResult, StatementMap } from '@stryker-mutator/api/test_runner';
 
 import { coreTokens } from '../di';
@@ -66,28 +66,30 @@ export class MutantTestMatcher {
   }
 
   public async enrichWithCoveredTests(testableMutant: TestableMutant) {
-    const transpiledLocation = await this.initialRunResult.sourceMapper.transpiledLocationFor({
-      fileName: testableMutant.mutant.fileName,
-      location: testableMutant.location
-    });
-    const fileCoverage = this.initialRunResult.coverageMaps[transpiledLocation.fileName];
-    const statementIndex = this.findMatchingStatement(new LocationHelper(transpiledLocation.location), fileCoverage);
-    if (statementIndex) {
-      if (this.isCoveredByBaseline(transpiledLocation.fileName, statementIndex)) {
-        testableMutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.Success);
+    if (testableMutant.mutant.status !== MutantStatus.Ignored) {
+      const transpiledLocation = await this.initialRunResult.sourceMapper.transpiledLocationFor({
+        fileName: testableMutant.mutant.fileName,
+        location: testableMutant.location
+      });
+      const fileCoverage = this.initialRunResult.coverageMaps[transpiledLocation.fileName];
+      const statementIndex = this.findMatchingStatement(new LocationHelper(transpiledLocation.location), fileCoverage);
+      if (statementIndex) {
+        if (this.isCoveredByBaseline(transpiledLocation.fileName, statementIndex)) {
+          testableMutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.Success);
+        } else {
+          this.initialRunResult.runResult.tests.forEach((testResult, id) => {
+            if (this.isCoveredByTest(id, transpiledLocation.fileName, statementIndex)) {
+              testableMutant.selectTest(testResult, id);
+            }
+          });
+        }
       } else {
-        this.initialRunResult.runResult.tests.forEach((testResult, id) => {
-          if (this.isCoveredByTest(id, transpiledLocation.fileName, statementIndex)) {
-            testableMutant.selectTest(testResult, id);
-          }
-        });
+        // Could not find a statement corresponding to this mutant
+        // This can happen when for example mutating a TypeScript interface
+        // It should result in an early result during mutation testing
+        // Lets delay error reporting for now
+        testableMutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.Failed);
       }
-    } else {
-      // Could not find a statement corresponding to this mutant
-      // This can happen when for example mutating a TypeScript interface
-      // It should result in an early result during mutation testing
-      // Lets delay error reporting for now
-      testableMutant.selectAllTests(this.initialRunResult.runResult, TestSelectionResult.Failed);
     }
   }
 
