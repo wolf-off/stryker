@@ -5,6 +5,7 @@ export { default as BlockStatementMutatorSpec } from './BlockStatementMutatorSpe
 export { default as BooleanLiteralMutatorSpec } from './BooleanLiteralMutatorSpec';
 export { default as ConditionalExpressionMutatorSpec } from './ConditionalExpressionMutatorSpec';
 export { default as EqualityOperatorMutatorSpec } from './EqualityOperatorMutatorSpec';
+export { default as FunctionChainMutatorSpec } from './FunctionChainMutatorSpec';
 export { default as LogicalOperatorMutatorSpec } from './LogicalOperatorMutatorSpec';
 export { default as ObjectLiteralMutatorSpec } from './ObjectLiteralMutatorSpec';
 export { default as StringLiteralMutatorSpec } from './StringLiteralMutatorSpec';

@@ -5,6 +5,7 @@ import BlockStatementMutator from './BlockStatementMutator';
 import BooleanLiteralMutator from './BooleanLiteralMutator';
 import ConditionalExpressionMutator from './ConditionalExpressionMutator';
 import EqualityOperatorMutator from './EqualityOperatorMutator';
+import FunctionChainMutator from './FunctionChainMutator';
 import ObjectLiteralMutator from './ObjectLiteralMutator';
 import StringLiteralMutator from './StringLiteralMutator';
 import LogicalOperatorMutator from './LogicalOperatorMutator';
@@ -24,5 +25,6 @@ export const nodeMutators: readonly NodeMutator[] = [
   new StringLiteralMutator(),
   new UnaryOperatorMutator(),
   new UpdateOperatorMutator(),
-  new ArrowFunctionMutator()
+  new ArrowFunctionMutator(),
+  new FunctionChainMutator()
 ];
